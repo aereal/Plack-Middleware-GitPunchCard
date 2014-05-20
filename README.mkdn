@@ -1,0 +1,30 @@
+# Plack::Middleware::GitPunchCard
+
+Visualize Git commits distribution
+
+## SYNOPSIS
+
+```perl
+use Plack::Builder;
+
+builder {
+  enable "Plack::Middleware::GitPunchCard",
+    path => '/git-punch-card', max_log_count => 3000;
+
+  sub { [200, [], ['']] };
+};
+```
+
+## DESCRIPTION
+
+Plack::Middleware::GitPunchCard is a middleware that visualize the Git commit commits time distribution like GitHub punch card.
+
+## AUTHOR
+
+aereal
+
+## LICENSE
+
+MIT License
+
+(See also LICENSE)
