@@ -4,6 +4,8 @@ Visualize Git commits distribution
 
 ## SYNOPSIS
 
+![punch card image](synopsis.png)
+
 ```perl
 use Plack::Builder;
 
