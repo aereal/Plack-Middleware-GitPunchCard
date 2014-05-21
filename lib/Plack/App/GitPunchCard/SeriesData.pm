@@ -25,7 +25,8 @@ sub series_data {
 sub commit_datetime {
   my ($self) = @_;
   my $limit_opt = $self->git_log_limit_opt;
-  my $out = `git --no-pager log --format='%at' --no-merges $limit_opt`;
+  my $git_dir = $self->git_dir;
+  my $out = `git --git-dir $git_dir --no-pager log --format='%at' --no-merges $limit_opt`;
   my @lines = split "\n", $out;
   [ map { $self->_build_time_from_epoch($_) } @lines ];
 }
