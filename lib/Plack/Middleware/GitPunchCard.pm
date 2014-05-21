@@ -50,7 +50,7 @@ __DATA__
     <script type="text/javascript">
     google.load('visualization', '1', { packages: ['corechart']});
     google.setOnLoadCallback(function () {
-      $.getJSON($(document.body).attr('data-api-path'), function (series) {
+      $.getJSON($(document.body).attr('data-json-path'), function (series) {
         var dataArray = [
             ['ID', 'Time', 'Weekday', '', 'commits'],
         ].concat(series);
@@ -88,7 +88,7 @@ __DATA__
         html,body,#chart { height: 100%; }
     </style>
   </head>
-  <body data-api-path="{{ json_path }}">
+  <body data-json-path="{{ json_path }}">
     <div id="chart"></div>
   </body>
 </html>
