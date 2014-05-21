@@ -7,6 +7,7 @@ use Plack::Util::Accessor qw( path json_path max_log_count git_dir );
 
 sub prepare_app {
     my ($self) = @_;
+    $self->{punchcard_html} //= do { local $/; <DATA> };
     $self->{series_data} //= Plack::App::GitPunchCard::SeriesData->new(
       max_log_count => $self->max_log_count,
       git_dir => $self->git_dir // './.git',
@@ -19,14 +20,15 @@ sub call {
     if ($path eq $self->json_path) {
         return $self->{series_data}->call($env);
     } elsif ($path eq $self->path) {
-        my $body = $self->html;
-        return [200, ['Content-Type' => 'text/html; charset=utf-8', 'Content-Length' => length($body)], [$body]];
+        return [200, ['Content-Type' => 'text/html; charset=utf-8', 'Content-Length' => length($self->{punchcard_html})], [$self->{punchcard_html}]];
     } else {
         return $self->app->($env);
     }
 }
 
-our $html = <<'EOF';
+1;
+
+__DATA__
 <!DOCTYPE html>
 <html>
   <head>
@@ -79,10 +81,3 @@ our $html = <<'EOF';
     <div id="chart"></div>
   </body>
 </html>
-EOF
-
-sub html {
-    $html;
-}
-
-1;
