@@ -4,14 +4,25 @@ use warnings;
 use parent qw( Plack::Middleware );
 use Plack::App::GitPunchCard::SeriesData;
 use Plack::Util::Accessor qw( path json_path max_log_count git_dir );
+use Plack::Util;
 
 sub prepare_app {
     my ($self) = @_;
-    $self->{punchcard_html} //= do { local $/; <DATA> };
+    $self->{punchcard_html} //= $self->html;
     $self->{series_data} //= Plack::App::GitPunchCard::SeriesData->new(
       max_log_count => $self->max_log_count,
       git_dir => $self->git_dir // './.git',
     );
+}
+
+sub html {
+  my ($self) = @_;
+  local $/;
+  my $html = <DATA>;
+  my $sym = 'json_path';
+  my $v = Plack::Util::encode_html($self->json_path);
+  $html =~ s/\{\{\s*$sym\s*\}\}/$v/;
+  $html;
 }
 
 sub call {
@@ -39,7 +50,7 @@ __DATA__
     <script type="text/javascript">
     google.load('visualization', '1', { packages: ['corechart']});
     google.setOnLoadCallback(function () {
-      $.getJSON(location.pathname + '.json', function (series) {
+      $.getJSON($(document.body).attr('data-api-path'), function (series) {
         var dataArray = [
             ['ID', 'Time', 'Weekday', '', 'commits'],
         ].concat(series);
@@ -77,7 +88,7 @@ __DATA__
         html,body,#chart { height: 100%; }
     </style>
   </head>
-  <body>
+  <body data-api-path="{{ json_path }}">
     <div id="chart"></div>
   </body>
 </html>
